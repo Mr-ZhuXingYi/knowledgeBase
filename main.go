@@ -2,17 +2,15 @@ package main
 
 import (
 	"fmt"
-	"jtthink.base/src/models"
-	"time"
+	"jtthink.base/src/common"
 )
 
 func main() {
-	g := models.NewGoods(
-		models.WithGoodsSalePrices(180),
-		models.WithGoodsMarketPrices(200),
-		models.WithGoodsCreateTime(time.Now()),
-		models.WithGoodsGoodsComment("dfefef"),
-		models.WithGoodsGoodsName(1),
-	)
-	fmt.Println(g)
+	common.InitDB()
+	var c int64
+	if err := common.DB.Table("goods").Count(&c).Error; err != nil {
+		panic(err)
+	}
+	fmt.Println(c)
+
 }

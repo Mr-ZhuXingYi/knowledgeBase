@@ -9,13 +9,13 @@ import (
 const OrdersTableName = "orders"
 
 type Orders struct {
-	Id          int             `gorm:"column:id;AUTO_INCREMENT;PRIMARY_KEY" json:"id"`
-	OrderNum    string          `gorm:"column:order_num" json:"order_num"`
-	UserId      int             `gorm:"column:user_id" json:"user_id"`
+	Id          int             `gorm:"column:id;AUTO_INCREMENT;PRIMARY_KEY" json:"id" `
+	OrderNum    string          `gorm:"column:order_num" json:"order_num"  binding:"required,max=500"`
+	UserId      int             `gorm:"column:user_id" json:"user_id"  binding:"gt=0"`
 	CreateTime  time.Time       `gorm:"column:create_time" json:"create_time"`
-	Status      int             `gorm:"column:status" json:"status"`
+	Status      int             `gorm:"column:status" json:"status"  binding:"gte=1,lte=3"`
 	OrderAmount decimal.Decimal `json:"order_amount" gorm:"column:order_amount"`
-	CouponCode  string          `gorm:"column:coupon_code" json:"coupon_code"`
+	CouponCode  string          `gorm:"column:coupon_code" json:"coupon_code"  binding:"min=0,max=500"`
 	UpdateTime  time.Time       `gorm:"column:update_time" json:"update_time"`
 }
 
