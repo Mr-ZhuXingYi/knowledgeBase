@@ -22,7 +22,7 @@ func (this *SubOrders) String() string {
 
 func NewSubOrders(f ...ModelAttrFunc) *SubOrders {
 	so := &SubOrders{}
-	UserAtts(f).Apply(so)
+	UserAttsFuncs(f).Apply(so)
 	return so
 }
 

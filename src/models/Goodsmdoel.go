@@ -33,7 +33,7 @@ func (this *Goods) setDiscount() {
 
 func NewGoods(f ...ModelAttrFunc) *Goods {
 	g := &Goods{}
-	UserAtts(f).Apply(g)
+	UserAttsFuncs(f).Apply(g)
 	return g
 }
 

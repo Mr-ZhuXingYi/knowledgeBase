@@ -5,9 +5,9 @@ type Mode interface {
 }
 
 type ModelAttrFunc func(m Mode)
-type UserAtts []ModelAttrFunc
+type UserAttsFuncs []ModelAttrFunc
 
-func (this UserAtts) Apply(m Mode) {
+func (this UserAttsFuncs) Apply(m Mode) {
 	for _, f := range this {
 		f(m)
 	}

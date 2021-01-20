@@ -26,7 +26,7 @@ func (this *Orders) String() string {
 
 func NewOrders(f ...ModelAttrFunc) *Orders {
 	o := &Orders{}
-	UserAtts(f).Apply(o)
+	UserAttsFuncs(f).Apply(o)
 	return o
 }
 
