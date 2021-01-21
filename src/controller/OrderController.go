@@ -3,7 +3,8 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/shenyisyn/goft-gin/goft"
-	"jtthink.base/src/service/OrderService"
+	"jtthink.base/src/application/dto"
+	"jtthink.base/src/service"
 	"strconv"
 )
 
@@ -12,7 +13,7 @@ const (
 )
 
 type OrderController struct {
-	OrderService *OrderService.OrderService `inject:"-"`
+	OrderService *service.OrderService `inject:"-"`
 }
 
 func NewOrderController() *OrderController {
@@ -24,7 +25,7 @@ func (this *OrderController) Name() string {
 }
 
 func (this *OrderController) Create(ctx *gin.Context) string {
-	params := new(OrderService.OrderREQ)
+	params := new(dto.OrderReq)
 	goft.Error(ctx.BindJSON(params), "BindJSON err")
 	userIdStr := ctx.Request.Header.Get(GET_USERID_KEY)
 	userId, _ := strconv.Atoi(userIdStr)

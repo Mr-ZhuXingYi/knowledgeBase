@@ -1,35 +1,21 @@
-package OrderService
+package assembler
 
 import (
+	"jtthink.base/src/application/dto"
 	"jtthink.base/src/models/OrderModel"
 	"jtthink.base/src/models/SubOrderModel"
-	"time"
+	"jtthink.base/src/service"
 )
 
-type OrderList struct {
-	Id          int       `json:"id" `
-	OrderNum    string    `json:"order_num"`
-	CreateTime  time.Time `json:"create_time"`
-	Status      string    `json:"status"`
-	OrderAmount float64   `json:"order_amount"`
-	CouponCode  string    `json:"coupon_code"`
-	UserId      int       `json:"user_id" json:"user_id" `
-	UpdateTime  time.Time `json:"update_time"`
-	GoodsId     int       `json:"goods_id"`
-	GoodsName   int       `json:"goods_name"`
-	GoodsPrices float64   `json:"goods_prices"`
-	GoodsCount  int       `json:"goods_count"`
-}
-
-func M2D(orders []*OrderModel.Orders, subOrders []*SubOrderModel.SubOrders) []*OrderList {
-	ret := make([]*OrderList, 0)
+func M2D_OrderList(orders []*OrderModel.Orders, subOrders []*SubOrderModel.SubOrders) []*dto.OrderList {
+	ret := make([]*dto.OrderList, 0)
 	for _, order := range orders {
 		for _, subOrder := range subOrders {
 			if subOrder.OrderId == order.Id {
 				goodsPrices, _ := subOrder.GoodsPrices.Float64()
 				orderAmount, _ := order.OrderAmount.Float64()
 				status := GetStatus(order.Status)
-				ret = append(ret, &OrderList{
+				ret = append(ret, &dto.OrderList{
 					Id:          order.Id,
 					OrderNum:    order.OrderNum,
 					CreateTime:  order.CreateTime,
@@ -52,11 +38,11 @@ func M2D(orders []*OrderModel.Orders, subOrders []*SubOrderModel.SubOrders) []*O
 
 func GetStatus(i int) string {
 	switch i {
-	case 1:
+	case service.STATUS_HAVE_PAY:
 		return "已支付"
-	case 2:
+	case service.STATUS_HAVENO_PAY:
 		return "未支付"
-	case 3:
+	case service.STATUS_HAVE_CANCELLES:
 		return "已取消"
 	default:
 		return ""

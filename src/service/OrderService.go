@@ -1,11 +1,14 @@
-package OrderService
+package service
 
 import (
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
+	"jtthink.base/src/application/assembler"
+	"jtthink.base/src/application/dto"
 	"jtthink.base/src/dao"
 	"jtthink.base/src/models/OrderModel"
 	"jtthink.base/src/models/SubOrderModel"
+	"jtthink.base/util"
 	"time"
 )
 
@@ -25,7 +28,7 @@ func NewOrderService() *OrderService {
 	return &OrderService{}
 }
 
-func (this *OrderService) OrderList(pageNum, pageSize, status, userId int) ([]*OrderList, int64) {
+func (this *OrderService) OrderList(pageNum, pageSize, status, userId int) ([]*dto.OrderList, int64) {
 	orders, total := this.OrderDao.GetOrderByUserIdAndStatus(this.DB, pageNum, pageSize, status, userId)
 
 	orderIds := []int{}
@@ -35,14 +38,14 @@ func (this *OrderService) OrderList(pageNum, pageSize, status, userId int) ([]*O
 	}
 	subOrders := this.SubOrderDao.GetSubOrderByOrderIds(this.DB, orderIds)
 
-	ret := M2D(orders, subOrders)
+	ret := assembler.M2D_OrderList(orders, subOrders)
 
 	return ret, total
 }
 
-func (this *OrderService) Create(req *OrderREQ) {
+func (this *OrderService) Create(req *dto.OrderReq) {
 	order := &OrderModel.Orders{
-		OrderNum:    GetOrderNum(),
+		OrderNum:    util.GetOrderNum(),
 		UserId:      req.UserId,
 		CreateTime:  time.Now(),
 		Status:      STATUS_HAVE_PAY,
