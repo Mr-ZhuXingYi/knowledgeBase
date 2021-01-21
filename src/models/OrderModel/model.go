@@ -1,8 +1,9 @@
-package models
+package OrderModel
 
 import (
 	"fmt"
 	"github.com/shopspring/decimal"
+	"jtthink.base/src/models"
 	"time"
 )
 
@@ -24,50 +25,13 @@ func (this *Orders) String() string {
 		this.Id, this.OrderNum, this.UserId, this.CreateTime, this.Status, this.OrderAmount, this.CouponCode, this.UpdateTime)
 }
 
-func NewOrders(f ...ModelAttrFunc) *Orders {
+func NewOrders(f ...models.ModelAttrFunc) *Orders {
 	o := &Orders{}
-	UserAttsFuncs(f).Apply(o)
+	models.UserAttsFuncs(f).Apply(o)
 	return o
 }
 
-func WithOrdersUpdateTime(updateTime time.Time) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).UpdateTime = updateTime
-	}
-}
-
-func WithOrdersCouponCode(couponCode string) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).CouponCode = couponCode
-	}
-}
-
-func WithOrdersOrderAmount(price float64) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).OrderAmount = decimal.NewFromFloat(price)
-	}
-}
-
-func WithOrdersStatus(status int) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).Status = status
-	}
-}
-
-func WithOrdersCreateTime(createTime time.Time) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).CreateTime = createTime
-	}
-}
-
-func WithOrdersOrderNum(orderNum string) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).OrderNum = orderNum
-	}
-}
-
-func WithOrdersUserId(UserId int) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Orders).UserId = UserId
-	}
+func (this *Orders) Mutate(f ...models.ModelAttrFunc) *Orders {
+	models.UserAttsFuncs(f).Apply(this)
+	return this
 }

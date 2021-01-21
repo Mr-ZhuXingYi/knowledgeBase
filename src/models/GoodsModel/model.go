@@ -1,8 +1,9 @@
-package models
+package GoodsModel
 
 import (
 	"fmt"
 	"github.com/shopspring/decimal"
+	"jtthink.base/src/models"
 	"time"
 )
 
@@ -31,40 +32,13 @@ func (this *Goods) setDiscount() {
 	}
 }
 
-func NewGoods(f ...ModelAttrFunc) *Goods {
+func NewGoods(f ...models.ModelAttrFunc) *Goods {
 	g := &Goods{}
-	UserAttsFuncs(f).Apply(g)
+	models.UserAttsFuncs(f).Apply(g)
 	return g
 }
 
-func WithGoodsSalePrices(price float64) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Goods).SalePrices = decimal.NewFromFloat(price)
-		m.(*Goods).setDiscount()
-	}
-}
-
-func WithGoodsMarketPrices(price float64) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Goods).MarketPrices = decimal.NewFromFloat(price)
-		m.(*Goods).setDiscount()
-	}
-}
-
-func WithGoodsCreateTime(createTime time.Time) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Goods).CreateTime = createTime
-	}
-}
-
-func WithGoodsGoodsComment(goodsComment string) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Goods).GoodsComment = goodsComment
-	}
-}
-
-func WithGoodsGoodsName(goodsName int) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*Goods).GoodsName = goodsName
-	}
+func (this *Goods) Mutate(f ...models.ModelAttrFunc) *Goods {
+	models.UserAttsFuncs(f).Apply(this)
+	return this
 }

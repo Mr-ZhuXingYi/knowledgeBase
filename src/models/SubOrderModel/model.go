@@ -1,8 +1,9 @@
-package models
+package SubOrderModel
 
 import (
 	"fmt"
 	"github.com/shopspring/decimal"
+	"jtthink.base/src/models"
 )
 
 const SubOrdersTableName = "suborders"
@@ -20,32 +21,13 @@ func (this *SubOrders) String() string {
 		this.Id, this.OrderId, this.GoodsName, this.GoodsPrices, this.GoodsCount)
 }
 
-func NewSubOrders(f ...ModelAttrFunc) *SubOrders {
+func NewSubOrders(f ...models.ModelAttrFunc) *SubOrders {
 	so := &SubOrders{}
-	UserAttsFuncs(f).Apply(so)
+	models.UserAttsFuncs(f).Apply(so)
 	return so
 }
 
-func WithSubOrdersOrderId(orderId int) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*SubOrders).OrderId = orderId
-	}
-}
-
-func WithSubOrdersGoodsName(goodsName int) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*SubOrders).GoodsName = goodsName
-	}
-}
-
-func WithSubOrdersGoodsPrices(price float64) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*SubOrders).GoodsPrices = decimal.NewFromFloat(price)
-	}
-}
-
-func WithSubOrdersGoodsCount(goodsCount int) ModelAttrFunc {
-	return func(m Mode) {
-		m.(*SubOrders).GoodsCount = goodsCount
-	}
+func (this *SubOrders) Mutate(f ...models.ModelAttrFunc) *SubOrders {
+	models.UserAttsFuncs(f).Apply(this)
+	return this
 }

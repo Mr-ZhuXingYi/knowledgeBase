@@ -2,46 +2,41 @@ package main
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql" // mysql driver
-	. "jtthink.base/src/models"
+	"jtthink.base/src/common"
+	"jtthink.base/src/models/OrderModel"
+	"jtthink.base/src/models/SubOrderModel"
 	"time"
 )
 
 func main() {
+	common.InitDB()
 	productionOrderData(199)
 }
 
 func productionOrderData(acount int) {
-	db, err := gorm.Open("mysql", "devuser:123~!@@tcp(39.105.28.235:3320)/tech?charset=utf8&parseTime=true&loc=Local&multiStatements=true")
-	if err != nil {
-		panic(err)
-	}
-	db.DB().SetMaxIdleConns(5)
-	db.DB().SetMaxOpenConns(10)
 	for i := 0; i < acount; i++ {
 		time.Sleep(time.Second * 3)
 		p, goodsname := getOrderAmount()
 		goodsCount := getGoodCount()
-		o := NewOrders(
-			WithOrdersUpdateTime(time.Now()),
-			WithOrdersCreateTime(time.Now()),
-			WithOrdersOrderAmount(p*goodsCount),
-			WithOrdersOrderNum(getOrderNum()),
-			WithOrdersUserId(getUserId()),
-			WithOrdersStatus(getGoodStatus()),
+		o := OrderModel.NewOrders(
+			OrderModel.WithOrdersUpdateTime(time.Now()),
+			OrderModel.WithOrdersCreateTime(time.Now()),
+			OrderModel.WithOrdersOrderAmount(p*goodsCount),
+			OrderModel.WithOrdersOrderNum(getOrderNum()),
+			OrderModel.WithOrdersUserId(getUserId()),
+			OrderModel.WithOrdersStatus(getGoodStatus()),
 		)
-		if err := db.Table("orders").Create(o).Error; err != nil {
+		if err := common.DB.Table("orders").Create(o).Error; err != nil {
 			panic(err)
 		}
 
-		so := NewSubOrders(
-			WithSubOrdersOrderId(o.Id),
-			WithSubOrdersGoodsName(goodsname),
-			WithSubOrdersGoodsPrices(p),
-			WithSubOrdersGoodsCount(int(goodsCount)),
+		so := SubOrderModel.NewSubOrders(
+			SubOrderModel.WithSubOrdersOrderId(o.Id),
+			SubOrderModel.WithSubOrdersGoodsName(goodsname),
+			SubOrderModel.WithSubOrdersGoodsPrices(p),
+			SubOrderModel.WithSubOrdersGoodsCount(int(goodsCount)),
 		)
-		if err := db.Table("suborders").Create(so).Error; err != nil {
+		if err := common.DB.Table("suborders").Create(so).Error; err != nil {
 			panic(err)
 		}
 	}
