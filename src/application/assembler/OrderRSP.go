@@ -5,9 +5,22 @@ import (
 	"jtthink.base/src/application/dto"
 	"jtthink.base/src/models/OrderModel"
 	"jtthink.base/src/models/SubOrderModel"
-	"jtthink.base/src/service"
 	"jtthink.base/util"
 	"time"
+)
+
+const (
+	STATUS_ZERO           = iota
+	STATUS_HAVE_PAY       //未支付
+	STATUS_HAVENO_PAY     //已支付
+	STATUS_HAVE_CANCELLES //已取消
+)
+
+const (
+	GOODS_ZERO   = iota
+	GOODS_MOUNTH //月会员
+	GOODS_SEASON //季度会员
+	GOODS_YEARAR //年会员
 )
 
 func M2D_OrderList(orders []*OrderModel.Orders, subOrders []*SubOrderModel.SubOrders) []*dto.OrderList {
@@ -41,11 +54,11 @@ func M2D_OrderList(orders []*OrderModel.Orders, subOrders []*SubOrderModel.SubOr
 
 func GetStatus(i int) string {
 	switch i {
-	case service.STATUS_HAVE_PAY:
+	case STATUS_HAVE_PAY:
 		return "已支付"
-	case service.STATUS_HAVENO_PAY:
+	case STATUS_HAVENO_PAY:
 		return "未支付"
-	case service.STATUS_HAVE_CANCELLES:
+	case STATUS_HAVE_CANCELLES:
 		return "已取消"
 	default:
 		return ""
@@ -57,7 +70,7 @@ func D2M_Order(req *dto.OrderReq) *OrderModel.Orders {
 		OrderNum:    util.GetOrderNum(),
 		UserId:      req.UserId,
 		CreateTime:  time.Now(),
-		Status:      service.STATUS_HAVE_PAY,
+		Status:      STATUS_HAVE_PAY,
 		OrderAmount: decimal.NewFromFloat(req.OrderAmount),
 		CouponCode:  req.CouponCode,
 		UpdateTime:  time.Now(),
@@ -68,8 +81,21 @@ func D2M_SubOrder(req *dto.OrderReq, orderId int) *SubOrderModel.SubOrders {
 	return &SubOrderModel.SubOrders{
 		OrderId:     orderId,
 		GoodsId:     req.GoodsId,
-		GoodsName:   req.GoodsName,
+		GoodsName:   GetGoodsName(req.GoodsName),
 		GoodsPrices: decimal.NewFromFloat(req.GoodsPrices),
 		GoodsCount:  req.GoodsCount,
+	}
+}
+
+func GetGoodsName(goods string) int {
+	switch goods {
+	case "月会员":
+		return GOODS_MOUNTH
+	case "季会员":
+		return GOODS_SEASON
+	case "年会员":
+		return GOODS_YEARAR
+	default:
+		return 0
 	}
 }

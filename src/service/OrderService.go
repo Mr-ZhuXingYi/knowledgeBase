@@ -7,12 +7,6 @@ import (
 	"jtthink.base/src/dao"
 )
 
-const (
-	STATUS_HAVE_PAY       = iota //未支付
-	STATUS_HAVENO_PAY            //已支付
-	STATUS_HAVE_CANCELLES        //已取消
-)
-
 type OrderService struct {
 	DB          *gorm.DB         `inject:"-"`
 	OrderDao    *dao.OrderDao    `inject:"-"`
@@ -24,26 +18,32 @@ func NewOrderService() *OrderService {
 }
 
 func (this *OrderService) OrderList(pageNum, pageSize, status, userId int) ([]*dto.OrderList, int64) {
+	//获取order列表
 	orders, total := this.OrderDao.GetOrderByUserIdAndStatus(this.DB, pageNum, pageSize, status, userId)
 
+	//获取subOrder列表
 	orderIds := []int{}
-
 	for _, order := range orders {
 		orderIds = append(orderIds, order.Id)
 	}
 	subOrders := this.SubOrderDao.GetSubOrderByOrderIds(this.DB, orderIds)
 
+	//拼装订单列表
 	ret := assembler.M2D_OrderList(orders, subOrders)
 
 	return ret, total
 }
 
 func (this *OrderService) Create(req *dto.OrderReq) {
+	db := this.DB.Begin()
+
+	//新建order
 	order := assembler.D2M_Order(req)
+	this.OrderDao.Create(db, order)
 
-	this.OrderDao.Create(this.DB, order)
-
+	//新建subOrder
 	subOrder := assembler.D2M_SubOrder(req, order.Id)
+	this.SubOrderDao.Create(db, subOrder)
 
-	this.SubOrderDao.Create(this.DB, subOrder)
+	db.Commit()
 }
