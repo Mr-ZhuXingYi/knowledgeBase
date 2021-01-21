@@ -1,15 +1,10 @@
 package service
 
 import (
-	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"jtthink.base/src/application/assembler"
 	"jtthink.base/src/application/dto"
 	"jtthink.base/src/dao"
-	"jtthink.base/src/models/OrderModel"
-	"jtthink.base/src/models/SubOrderModel"
-	"jtthink.base/util"
-	"time"
 )
 
 const (
@@ -44,25 +39,11 @@ func (this *OrderService) OrderList(pageNum, pageSize, status, userId int) ([]*d
 }
 
 func (this *OrderService) Create(req *dto.OrderReq) {
-	order := &OrderModel.Orders{
-		OrderNum:    util.GetOrderNum(),
-		UserId:      req.UserId,
-		CreateTime:  time.Now(),
-		Status:      STATUS_HAVE_PAY,
-		OrderAmount: decimal.NewFromFloat(req.OrderAmount),
-		CouponCode:  req.CouponCode,
-		UpdateTime:  time.Now(),
-	}
+	order := assembler.D2M_Order(req)
 
 	this.OrderDao.Create(this.DB, order)
 
-	subOrder := &SubOrderModel.SubOrders{
-		OrderId:     order.Id,
-		GoodsId:     req.GoodsId,
-		GoodsName:   req.GoodsName,
-		GoodsPrices: decimal.NewFromFloat(req.GoodsPrices),
-		GoodsCount:  req.GoodsCount,
-	}
+	subOrder := assembler.D2M_SubOrder(req, order.Id)
 
 	this.SubOrderDao.Create(this.DB, subOrder)
 }

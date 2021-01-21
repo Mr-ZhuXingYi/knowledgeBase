@@ -1,10 +1,13 @@
 package assembler
 
 import (
+	"github.com/shopspring/decimal"
 	"jtthink.base/src/application/dto"
 	"jtthink.base/src/models/OrderModel"
 	"jtthink.base/src/models/SubOrderModel"
 	"jtthink.base/src/service"
+	"jtthink.base/util"
+	"time"
 )
 
 func M2D_OrderList(orders []*OrderModel.Orders, subOrders []*SubOrderModel.SubOrders) []*dto.OrderList {
@@ -46,5 +49,27 @@ func GetStatus(i int) string {
 		return "已取消"
 	default:
 		return ""
+	}
+}
+
+func D2M_Order(req *dto.OrderReq) *OrderModel.Orders {
+	return &OrderModel.Orders{
+		OrderNum:    util.GetOrderNum(),
+		UserId:      req.UserId,
+		CreateTime:  time.Now(),
+		Status:      service.STATUS_HAVE_PAY,
+		OrderAmount: decimal.NewFromFloat(req.OrderAmount),
+		CouponCode:  req.CouponCode,
+		UpdateTime:  time.Now(),
+	}
+}
+
+func D2M_SubOrder(req *dto.OrderReq, orderId int) *SubOrderModel.SubOrders {
+	return &SubOrderModel.SubOrders{
+		OrderId:     orderId,
+		GoodsId:     req.GoodsId,
+		GoodsName:   req.GoodsName,
+		GoodsPrices: decimal.NewFromFloat(req.GoodsPrices),
+		GoodsCount:  req.GoodsCount,
 	}
 }

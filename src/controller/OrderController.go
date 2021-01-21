@@ -27,8 +27,7 @@ func (this *OrderController) Name() string {
 func (this *OrderController) Create(ctx *gin.Context) string {
 	params := new(dto.OrderReq)
 	goft.Error(ctx.BindJSON(params), "BindJSON err")
-	userIdStr := ctx.Request.Header.Get(GET_USERID_KEY)
-	userId, _ := strconv.Atoi(userIdStr)
+	userId := GetUserId(ctx)
 	params.UserId = userId
 
 	this.OrderService.Create(params)
@@ -36,8 +35,7 @@ func (this *OrderController) Create(ctx *gin.Context) string {
 }
 
 func (this *OrderController) OrderList(ctx *gin.Context) goft.Json {
-	userIdStr := ctx.Request.Header.Get(GET_USERID_KEY)
-	userId, _ := strconv.Atoi(userIdStr)
+	userId := GetUserId(ctx)
 	params := new(struct {
 		PageNum  int `form:"page_num"`
 		PageSize int `form:"page_size"`
@@ -49,5 +47,12 @@ func (this *OrderController) OrderList(ctx *gin.Context) goft.Json {
 }
 
 func (this *OrderController) Build(goft *goft.Goft) {
-	goft.Handle("GET", "/order", this.OrderList)
+	goft.Handle("GET", "/order", this.OrderList).
+		Handle("POST", "/order", this.Create)
+}
+
+func GetUserId(ctx *gin.Context) int {
+	userIdStr := ctx.Request.Header.Get(GET_USERID_KEY)
+	userId, _ := strconv.Atoi(userIdStr)
+	return userId
 }
