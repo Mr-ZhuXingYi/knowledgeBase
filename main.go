@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"github.com/shenyisyn/goft-gin/goft"
 	"jtthink.base/src/common"
+	"jtthink.base/src/configuration"
 	"jtthink.base/src/controller"
 	"jtthink.base/src/models/GoodsModel"
 )
 
 func main() {
-	common.InitDB()
-	goft.Ignite().
-		Mount("v1", controller.NewOrdercontroller()).
+	goft.Ignite().Config(common.NewDBconfig(), configuration.NewServiceConfig()).
+		Mount("v1",
+			controller.NewOrderController(),
+			controller.NewGoodsController(),
+		).
 		Launch()
 }
 

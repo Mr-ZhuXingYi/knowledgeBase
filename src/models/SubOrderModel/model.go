@@ -11,6 +11,7 @@ const SubOrdersTableName = "suborders"
 type SubOrders struct {
 	Id          int             `gorm:"column:id;AUTO_INCREMENT;PRIMARY_KEY" json:"id"`
 	OrderId     int             `gorm:"column:order_id" json:"order_id" binding:"gt=0"`
+	GoodsId     int             `gorm:"column:goods_id" json:"goods_id" binding:"gt=0"`
 	GoodsName   int             `gorm:"column:goods_name" json:"goods_name"  binding:"gte=1,lte=3"`
 	GoodsPrices decimal.Decimal `gorm:"column:goods_prices" json:"goods_prices"`
 	GoodsCount  int             `gorm:"column:goods_count" json:"goods_count" binding:"gt=0"`

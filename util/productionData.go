@@ -9,8 +9,7 @@ import (
 )
 
 func main() {
-	common.InitDB()
-	productionOrderData(199)
+	productionOrderData(300)
 }
 
 func productionOrderData(acount int) {
@@ -19,24 +18,25 @@ func productionOrderData(acount int) {
 		p, goodsname := getOrderAmount()
 		goodsCount := getGoodCount()
 		o := OrderModel.NewOrders(
-			OrderModel.WithOrdersUpdateTime(time.Now()),
-			OrderModel.WithOrdersCreateTime(time.Now()),
-			OrderModel.WithOrdersOrderAmount(p*goodsCount),
-			OrderModel.WithOrdersOrderNum(getOrderNum()),
-			OrderModel.WithOrdersUserId(getUserId()),
-			OrderModel.WithOrdersStatus(getGoodStatus()),
+			OrderModel.WithUpdateTime(time.Now()),
+			OrderModel.WithCreateTime(time.Now()),
+			OrderModel.WithOrderAmount(p*goodsCount),
+			OrderModel.WithOrderNum(getOrderNum()),
+			OrderModel.WithUserId(getUserId()),
+			OrderModel.WithStatus(getGoodStatus()),
 		)
-		if err := common.DB.Table("orders").Create(o).Error; err != nil {
+		if err := common.NewDBconfig().GormDB().Table("orders").Create(o).Error; err != nil {
 			panic(err)
 		}
 
 		so := SubOrderModel.NewSubOrders(
-			SubOrderModel.WithSubOrdersOrderId(o.Id),
-			SubOrderModel.WithSubOrdersGoodsName(goodsname),
-			SubOrderModel.WithSubOrdersGoodsPrices(p),
-			SubOrderModel.WithSubOrdersGoodsCount(int(goodsCount)),
+			SubOrderModel.WithOrderId(o.Id),
+			SubOrderModel.WithGoodsName(goodsname),
+			SubOrderModel.WithGoodsPrices(p),
+			SubOrderModel.WithGoodsCount(int(goodsCount)),
+			SubOrderModel.WithGoodsId(goodsname),
 		)
-		if err := common.DB.Table("suborders").Create(so).Error; err != nil {
+		if err := common.NewDBconfig().GormDB().Table("suborders").Create(so).Error; err != nil {
 			panic(err)
 		}
 	}

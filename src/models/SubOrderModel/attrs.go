@@ -28,3 +28,9 @@ func WithGoodsCount(goodsCount int) models.ModelAttrFunc {
 		m.(*SubOrders).GoodsCount = goodsCount
 	}
 }
+
+func WithGoodsId(goodsId int) models.ModelAttrFunc {
+	return func(m models.Mode) {
+		m.(*SubOrders).GoodsId = goodsId
+	}
+}
